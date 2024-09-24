@@ -1,14 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, LockOutlined, SearchOutlined, UnlockOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Tag, Tooltip } from 'antd';
-import { useGetAllUserQuery } from '../../../services/userAPI';
-import { Link } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, LockOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Space, Table, Tag } from 'antd';
+import { useGetAllUserQuery } from '../../services/userAPI';
+
 
 const ManageUser = () => {
     const { data: users, error, isLoading } = useGetAllUserQuery();
-    const filteredUsers = users?.users.filter(user => user.role.id === 2);
-
+    console.log('data nè :', users);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -113,11 +111,11 @@ const ManageUser = () => {
     const columns = [
         {
             title: 'Name',
-            dataIndex: 'full_name',
-            key: 'full_name',
+            dataIndex: 'name',
+            key: 'name',
             // width: '30%',
-            ...getColumnSearchProps('full_name'),
-            sorter: (a, b) => a.full_name.length - b.full_name.length,
+            ...getColumnSearchProps('name'),
+            sorter: (a, b) => a.name.length - b.name.length,
             sortDirections: ['descend', 'ascend'],
         },
         {
@@ -129,20 +127,19 @@ const ManageUser = () => {
         },
         {
             title: 'Số điện thoại',
-            dataIndex: 'phone_number',
-            key: 'phone_number',
+            dataIndex: 'phone',
+            key: 'phone',
             // width: '20%',
-            ...getColumnSearchProps('phone_number'),
+            ...getColumnSearchProps('phone'),
         },
         {
-            title: 'Ngày sinh nhật',
-            dataIndex: 'date_of_birth',
-            key: 'date_of_birth',
+            title: 'Ngày đăng ký',
+            dataIndex: 'date',
+            key: 'date',
             // width: '20%',
-            ...getColumnSearchProps('date_of_birth'),
-            sorter: (a, b) => new Date(a.date_of_birth) - new Date(b.date_of_birth),
+            ...getColumnSearchProps('date'),
+            sorter: (a, b) => new Date(a.date) - new Date(b.date),
             sortDirections: ['descend', 'ascend'],
-            render: (date_of_birth) => dayjs(date_of_birth).format('DD/MM/YYYY'),
         },
         {
             title: 'Status',
@@ -161,18 +158,18 @@ const ManageUser = () => {
                 },
 
             ],
-            onFilter: (value, record) => record.is_active.indexOf(value) === 0,
+            onFilter: (value, record) => record.state.indexOf(value) === 0,
             render: (_, record) => (
                 <div>
-                    {record.is_active === true &&
+                    {record.state === "Hoạt động" &&
                         < Tag icon={<CheckCircleOutlined />} color="success">
-                            Hoạt động
+                            {record.state}
                         </Tag>
                     }
 
-                    {record.is_active === false &&
+                    {record.state === "Bị khóa" &&
                         < Tag icon={< CloseCircleOutlined />} color="error" >
-                            Bị khóa
+                            {record.state}
                         </Tag >
                     }
                 </div >
@@ -192,53 +189,29 @@ const ManageUser = () => {
             title: 'Hành động',
             key: 'action',
             render: (text, record) => (
-                <Space>
-                    {
-                        record.is_active === true
-                            ?
-                            <Tooltip title="Khóa người dùng" color='red'>
-                                <Button
-                                    icon={<LockOutlined />}
-                                    danger
-                                    onClick={() => {
-                                        showModal({
-                                            userId: record.id,
-                                            status: 0
-                                        })
-                                    }} />
-                            </Tooltip>
-                            :
-                            <Tooltip title="Mở khóa người dùng" color='green'>
-                                <Button
-                                    icon={<UnlockOutlined />}
-                                    onClick={() => {
-                                        showModal({
-                                            userId: record.id,
-                                            status: 1
-                                        })
-                                    }} ></Button>
-                            </Tooltip>
-                    }
-                    <Tooltip title="Xem chi tiết" color='blue'>
-                        <Link to={`user-details/${record.key}`}>
-                            <Button
-                                icon={<EyeOutlined />}
-                            >
-                            </Button>
-                        </Link>
-                    </Tooltip>
-                </Space >
+                <div className="space-x-2">
+                    <Button danger
+                        icon={<LockOutlined />}
+                        onClick={() => handleLockUser(record.key)}
+                    >
+
+                    </Button>
+
+                    <Button
+                        type="primary"
+                        icon={<EyeOutlined />}
+                        onClick={() => handleViewDetails(record.key)}
+                    >
+
+                    </Button>
+                </div>
             ),
         },
 
     ];
-    const transformedData = users?.users?.map((item, index) => ({
-        ...item,
-        key: index + 1,
-    }));
-    console.log("tra", transformedData)
+    ;
     return (
-        <Table columns={columns} dataSource={transformedData} loading={isLoading} />
+        <Table columns={columns} dataSource={users} loading={isLoading} />
     )
 }
 

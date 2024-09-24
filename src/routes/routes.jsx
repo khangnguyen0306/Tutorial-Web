@@ -9,11 +9,9 @@ import ManagerGuard from "./ManagerGuard";
 
 
 const Login = Loadable({ loader: () => import("../pages/login/Login") });
-const ManageUser = Loadable({ loader: () => import("../pages/admin/ManageUser/ManageUser") });
-const Detail = Loadable({ loader: () => import("../pages/admin/ManageUser/Detail/Detail") });
+const ManageUser = Loadable({ loader: () => import("../pages/admin/ManageUser") });
 const ManageCourse = Loadable({ loader: () => import("../pages/admin/ManageCourse") });
 const Cost = Loadable({ loader: () => import("../pages/admin/Cost") });
-const Quiz = Loadable({ loader: () => import("../pages/admin/Quiz") });
 const Register = Loadable({ loader: () => import("../pages/register/Register") });
 const Lotrinh = Loadable({ loader: () => import("../pages/lotrinh/Lotrinh") });
 const Post = Loadable({ loader: () => import("../pages/post/Post") });
@@ -102,11 +100,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "admin",
-        element: <AuthGuard />,
+        // element: <AuthGuard />,
         children: [
           {
             index: false,
-            element: <AdminGuard />,
+            // element: <AdminGuard />,
             children: [
               {
                 index: true,
@@ -117,17 +115,8 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: "users",
-        children: [
-          {
-            index: true,
-            element: ManageUser,
-          },
-          {
-            path: "user-details/:userId",
-            element: Detail,
-          }
-        ]
+        path: "/users",
+        element: ManageUser,
       },
       {
         path: "/videos",
@@ -137,15 +126,6 @@ export const router = createBrowserRouter([
         path: "/money",
         element: Cost,
       },
-      {
-        path: "/quizs",
-        element: Quiz,
-      },
-      {
-        path: "/money",
-        element: Cost,
-      },
-
       {
         path: "manage-products",
         element: <AuthGuard />,

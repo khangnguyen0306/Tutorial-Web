@@ -5,7 +5,8 @@ import { selectCurrentUser } from "../slices/auth.slice";
 const AdminGuard = () => {
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
-  if (user?.id !== 1) {
+
+  if (user?.roleId !== 1) {
     return <Navigate to="/404" replace />;
   }
 
